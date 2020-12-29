@@ -2,23 +2,44 @@ syntax = "proto3";
 option go_package = "github.com/rendicott/uggly";
 package uggly;
 
-message Screen {
-    int32 id = 1;
-    int32 height = 2;
-    int32 width = 3;
-    string contents = 4;
+message FeedRequest {
+    bool sendData = 10;
 }
 
-message Screens {
-    ScreenSet set = 1;
-    repeated Screen screens = 2;
+message PixelSlice {
+    repeated Pixel pixels = 10;
 }
 
-message ScreenSet {
-    int32 id = 1;
-    string name = 2;
+message Pixel {
+    int32 c = 10;
+    Style st = 11;
+    bool isBorder = 12;
 }
 
-service Screener {
-    rpc GetScreens(ScreenSet) returns(stream Screen) {}
+message DivBox {
+    bool border = 10;
+    int32 borderW = 11;
+    int32 borderChar = 12;
+    Style borderSt = 13;
+    int32 fillChar = 14;
+    int32 startX = 15;
+    int32 startY = 16;
+    int32 width = 17;
+    int32 Height = 18;
+    repeated PixelSlice rawContents = 19;
 }
+
+message DivBoxes {
+    repeated DivBox boxes = 10;
+}
+
+message Style {
+    int32 fg = 10;
+    int32 bg = 11;
+    int32 attr = 12;
+}
+
+service Feed {
+    rpc GetDivs(FeedRequest) returns(DivBoxes) {}
+}
+

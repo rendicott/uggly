@@ -13,112 +13,85 @@ import (
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion7
 
-// ScreenerClient is the client API for Screener service.
+// FeedClient is the client API for Feed service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ScreenerClient interface {
-	GetScreens(ctx context.Context, in *ScreenSet, opts ...grpc.CallOption) (Screener_GetScreensClient, error)
+type FeedClient interface {
+	GetDivs(ctx context.Context, in *FeedRequest, opts ...grpc.CallOption) (*DivBoxes, error)
 }
 
-type screenerClient struct {
+type feedClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewScreenerClient(cc grpc.ClientConnInterface) ScreenerClient {
-	return &screenerClient{cc}
+func NewFeedClient(cc grpc.ClientConnInterface) FeedClient {
+	return &feedClient{cc}
 }
 
-func (c *screenerClient) GetScreens(ctx context.Context, in *ScreenSet, opts ...grpc.CallOption) (Screener_GetScreensClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Screener_serviceDesc.Streams[0], "/uggly.Screener/GetScreens", opts...)
+func (c *feedClient) GetDivs(ctx context.Context, in *FeedRequest, opts ...grpc.CallOption) (*DivBoxes, error) {
+	out := new(DivBoxes)
+	err := c.cc.Invoke(ctx, "/uggly.Feed/GetDivs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &screenerGetScreensClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
+	return out, nil
 }
 
-type Screener_GetScreensClient interface {
-	Recv() (*Screen, error)
-	grpc.ClientStream
-}
-
-type screenerGetScreensClient struct {
-	grpc.ClientStream
-}
-
-func (x *screenerGetScreensClient) Recv() (*Screen, error) {
-	m := new(Screen)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// ScreenerServer is the server API for Screener service.
-// All implementations must embed UnimplementedScreenerServer
+// FeedServer is the server API for Feed service.
+// All implementations must embed UnimplementedFeedServer
 // for forward compatibility
-type ScreenerServer interface {
-	GetScreens(*ScreenSet, Screener_GetScreensServer) error
-	mustEmbedUnimplementedScreenerServer()
+type FeedServer interface {
+	GetDivs(context.Context, *FeedRequest) (*DivBoxes, error)
+	mustEmbedUnimplementedFeedServer()
 }
 
-// UnimplementedScreenerServer must be embedded to have forward compatible implementations.
-type UnimplementedScreenerServer struct {
+// UnimplementedFeedServer must be embedded to have forward compatible implementations.
+type UnimplementedFeedServer struct {
 }
 
-func (UnimplementedScreenerServer) GetScreens(*ScreenSet, Screener_GetScreensServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetScreens not implemented")
+func (UnimplementedFeedServer) GetDivs(context.Context, *FeedRequest) (*DivBoxes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDivs not implemented")
 }
-func (UnimplementedScreenerServer) mustEmbedUnimplementedScreenerServer() {}
+func (UnimplementedFeedServer) mustEmbedUnimplementedFeedServer() {}
 
-// UnsafeScreenerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ScreenerServer will
+// UnsafeFeedServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FeedServer will
 // result in compilation errors.
-type UnsafeScreenerServer interface {
-	mustEmbedUnimplementedScreenerServer()
+type UnsafeFeedServer interface {
+	mustEmbedUnimplementedFeedServer()
 }
 
-func RegisterScreenerServer(s grpc.ServiceRegistrar, srv ScreenerServer) {
-	s.RegisterService(&_Screener_serviceDesc, srv)
+func RegisterFeedServer(s grpc.ServiceRegistrar, srv FeedServer) {
+	s.RegisterService(&_Feed_serviceDesc, srv)
 }
 
-func _Screener_GetScreens_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ScreenSet)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _Feed_GetDivs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FeedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(ScreenerServer).GetScreens(m, &screenerGetScreensServer{stream})
+	if interceptor == nil {
+		return srv.(FeedServer).GetDivs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/uggly.Feed/GetDivs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FeedServer).GetDivs(ctx, req.(*FeedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-type Screener_GetScreensServer interface {
-	Send(*Screen) error
-	grpc.ServerStream
-}
-
-type screenerGetScreensServer struct {
-	grpc.ServerStream
-}
-
-func (x *screenerGetScreensServer) Send(m *Screen) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-var _Screener_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "uggly.Screener",
-	HandlerType: (*ScreenerServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams: []grpc.StreamDesc{
+var _Feed_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "uggly.Feed",
+	HandlerType: (*FeedServer)(nil),
+	Methods: []grpc.MethodDesc{
 		{
-			StreamName:    "GetScreens",
-			Handler:       _Screener_GetScreens_Handler,
-			ServerStreams: true,
+			MethodName: "GetDivs",
+			Handler:    _Feed_GetDivs_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "uggly.proto",
 }

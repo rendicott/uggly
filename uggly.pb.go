@@ -25,19 +25,16 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-type Screen struct {
+type FeedRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id       int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Height   int32  `protobuf:"varint,2,opt,name=height,proto3" json:"height,omitempty"`
-	Width    int32  `protobuf:"varint,3,opt,name=width,proto3" json:"width,omitempty"`
-	Contents string `protobuf:"bytes,4,opt,name=contents,proto3" json:"contents,omitempty"`
+	SendData bool `protobuf:"varint,10,opt,name=sendData,proto3" json:"sendData,omitempty"`
 }
 
-func (x *Screen) Reset() {
-	*x = Screen{}
+func (x *FeedRequest) Reset() {
+	*x = FeedRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_uggly_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -45,13 +42,13 @@ func (x *Screen) Reset() {
 	}
 }
 
-func (x *Screen) String() string {
+func (x *FeedRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Screen) ProtoMessage() {}
+func (*FeedRequest) ProtoMessage() {}
 
-func (x *Screen) ProtoReflect() protoreflect.Message {
+func (x *FeedRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_uggly_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -63,50 +60,28 @@ func (x *Screen) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Screen.ProtoReflect.Descriptor instead.
-func (*Screen) Descriptor() ([]byte, []int) {
+// Deprecated: Use FeedRequest.ProtoReflect.Descriptor instead.
+func (*FeedRequest) Descriptor() ([]byte, []int) {
 	return file_uggly_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Screen) GetId() int32 {
+func (x *FeedRequest) GetSendData() bool {
 	if x != nil {
-		return x.Id
+		return x.SendData
 	}
-	return 0
+	return false
 }
 
-func (x *Screen) GetHeight() int32 {
-	if x != nil {
-		return x.Height
-	}
-	return 0
-}
-
-func (x *Screen) GetWidth() int32 {
-	if x != nil {
-		return x.Width
-	}
-	return 0
-}
-
-func (x *Screen) GetContents() string {
-	if x != nil {
-		return x.Contents
-	}
-	return ""
-}
-
-type Screens struct {
+type PixelSlice struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Set     *ScreenSet `protobuf:"bytes,1,opt,name=set,proto3" json:"set,omitempty"`
-	Screens []*Screen  `protobuf:"bytes,2,rep,name=screens,proto3" json:"screens,omitempty"`
+	Pixels []*Pixel `protobuf:"bytes,10,rep,name=pixels,proto3" json:"pixels,omitempty"`
 }
 
-func (x *Screens) Reset() {
-	*x = Screens{}
+func (x *PixelSlice) Reset() {
+	*x = PixelSlice{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_uggly_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -114,13 +89,13 @@ func (x *Screens) Reset() {
 	}
 }
 
-func (x *Screens) String() string {
+func (x *PixelSlice) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Screens) ProtoMessage() {}
+func (*PixelSlice) ProtoMessage() {}
 
-func (x *Screens) ProtoReflect() protoreflect.Message {
+func (x *PixelSlice) ProtoReflect() protoreflect.Message {
 	mi := &file_uggly_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -132,36 +107,30 @@ func (x *Screens) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Screens.ProtoReflect.Descriptor instead.
-func (*Screens) Descriptor() ([]byte, []int) {
+// Deprecated: Use PixelSlice.ProtoReflect.Descriptor instead.
+func (*PixelSlice) Descriptor() ([]byte, []int) {
 	return file_uggly_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Screens) GetSet() *ScreenSet {
+func (x *PixelSlice) GetPixels() []*Pixel {
 	if x != nil {
-		return x.Set
+		return x.Pixels
 	}
 	return nil
 }
 
-func (x *Screens) GetScreens() []*Screen {
-	if x != nil {
-		return x.Screens
-	}
-	return nil
-}
-
-type ScreenSet struct {
+type Pixel struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id   int32  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	C        int32  `protobuf:"varint,10,opt,name=c,proto3" json:"c,omitempty"`
+	St       *Style `protobuf:"bytes,11,opt,name=st,proto3" json:"st,omitempty"`
+	IsBorder bool   `protobuf:"varint,12,opt,name=isBorder,proto3" json:"isBorder,omitempty"`
 }
 
-func (x *ScreenSet) Reset() {
-	*x = ScreenSet{}
+func (x *Pixel) Reset() {
+	*x = Pixel{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_uggly_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -169,13 +138,13 @@ func (x *ScreenSet) Reset() {
 	}
 }
 
-func (x *ScreenSet) String() string {
+func (x *Pixel) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ScreenSet) ProtoMessage() {}
+func (*Pixel) ProtoMessage() {}
 
-func (x *ScreenSet) ProtoReflect() protoreflect.Message {
+func (x *Pixel) ProtoReflect() protoreflect.Message {
 	mi := &file_uggly_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -187,51 +156,309 @@ func (x *ScreenSet) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ScreenSet.ProtoReflect.Descriptor instead.
-func (*ScreenSet) Descriptor() ([]byte, []int) {
+// Deprecated: Use Pixel.ProtoReflect.Descriptor instead.
+func (*Pixel) Descriptor() ([]byte, []int) {
 	return file_uggly_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ScreenSet) GetId() int32 {
+func (x *Pixel) GetC() int32 {
 	if x != nil {
-		return x.Id
+		return x.C
 	}
 	return 0
 }
 
-func (x *ScreenSet) GetName() string {
+func (x *Pixel) GetSt() *Style {
 	if x != nil {
-		return x.Name
+		return x.St
 	}
-	return ""
+	return nil
+}
+
+func (x *Pixel) GetIsBorder() bool {
+	if x != nil {
+		return x.IsBorder
+	}
+	return false
+}
+
+type DivBox struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Border      bool          `protobuf:"varint,10,opt,name=border,proto3" json:"border,omitempty"`
+	BorderW     int32         `protobuf:"varint,11,opt,name=borderW,proto3" json:"borderW,omitempty"`
+	BorderChar  int32         `protobuf:"varint,12,opt,name=borderChar,proto3" json:"borderChar,omitempty"`
+	BorderSt    *Style        `protobuf:"bytes,13,opt,name=borderSt,proto3" json:"borderSt,omitempty"`
+	FillChar    int32         `protobuf:"varint,14,opt,name=fillChar,proto3" json:"fillChar,omitempty"`
+	StartX      int32         `protobuf:"varint,15,opt,name=startX,proto3" json:"startX,omitempty"`
+	StartY      int32         `protobuf:"varint,16,opt,name=startY,proto3" json:"startY,omitempty"`
+	Width       int32         `protobuf:"varint,17,opt,name=width,proto3" json:"width,omitempty"`
+	Height      int32         `protobuf:"varint,18,opt,name=Height,proto3" json:"Height,omitempty"`
+	RawContents []*PixelSlice `protobuf:"bytes,19,rep,name=rawContents,proto3" json:"rawContents,omitempty"`
+}
+
+func (x *DivBox) Reset() {
+	*x = DivBox{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_uggly_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DivBox) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DivBox) ProtoMessage() {}
+
+func (x *DivBox) ProtoReflect() protoreflect.Message {
+	mi := &file_uggly_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DivBox.ProtoReflect.Descriptor instead.
+func (*DivBox) Descriptor() ([]byte, []int) {
+	return file_uggly_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *DivBox) GetBorder() bool {
+	if x != nil {
+		return x.Border
+	}
+	return false
+}
+
+func (x *DivBox) GetBorderW() int32 {
+	if x != nil {
+		return x.BorderW
+	}
+	return 0
+}
+
+func (x *DivBox) GetBorderChar() int32 {
+	if x != nil {
+		return x.BorderChar
+	}
+	return 0
+}
+
+func (x *DivBox) GetBorderSt() *Style {
+	if x != nil {
+		return x.BorderSt
+	}
+	return nil
+}
+
+func (x *DivBox) GetFillChar() int32 {
+	if x != nil {
+		return x.FillChar
+	}
+	return 0
+}
+
+func (x *DivBox) GetStartX() int32 {
+	if x != nil {
+		return x.StartX
+	}
+	return 0
+}
+
+func (x *DivBox) GetStartY() int32 {
+	if x != nil {
+		return x.StartY
+	}
+	return 0
+}
+
+func (x *DivBox) GetWidth() int32 {
+	if x != nil {
+		return x.Width
+	}
+	return 0
+}
+
+func (x *DivBox) GetHeight() int32 {
+	if x != nil {
+		return x.Height
+	}
+	return 0
+}
+
+func (x *DivBox) GetRawContents() []*PixelSlice {
+	if x != nil {
+		return x.RawContents
+	}
+	return nil
+}
+
+type DivBoxes struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Boxes []*DivBox `protobuf:"bytes,10,rep,name=boxes,proto3" json:"boxes,omitempty"`
+}
+
+func (x *DivBoxes) Reset() {
+	*x = DivBoxes{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_uggly_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DivBoxes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DivBoxes) ProtoMessage() {}
+
+func (x *DivBoxes) ProtoReflect() protoreflect.Message {
+	mi := &file_uggly_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DivBoxes.ProtoReflect.Descriptor instead.
+func (*DivBoxes) Descriptor() ([]byte, []int) {
+	return file_uggly_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *DivBoxes) GetBoxes() []*DivBox {
+	if x != nil {
+		return x.Boxes
+	}
+	return nil
+}
+
+type Style struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Fg   int32 `protobuf:"varint,10,opt,name=fg,proto3" json:"fg,omitempty"`
+	Bg   int32 `protobuf:"varint,11,opt,name=bg,proto3" json:"bg,omitempty"`
+	Attr int32 `protobuf:"varint,12,opt,name=attr,proto3" json:"attr,omitempty"`
+}
+
+func (x *Style) Reset() {
+	*x = Style{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_uggly_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Style) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Style) ProtoMessage() {}
+
+func (x *Style) ProtoReflect() protoreflect.Message {
+	mi := &file_uggly_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Style.ProtoReflect.Descriptor instead.
+func (*Style) Descriptor() ([]byte, []int) {
+	return file_uggly_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *Style) GetFg() int32 {
+	if x != nil {
+		return x.Fg
+	}
+	return 0
+}
+
+func (x *Style) GetBg() int32 {
+	if x != nil {
+		return x.Bg
+	}
+	return 0
+}
+
+func (x *Style) GetAttr() int32 {
+	if x != nil {
+		return x.Attr
+	}
+	return 0
 }
 
 var File_uggly_proto protoreflect.FileDescriptor
 
 var file_uggly_proto_rawDesc = []byte{
 	0x0a, 0x0b, 0x75, 0x67, 0x67, 0x6c, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x75,
-	0x67, 0x67, 0x6c, 0x79, 0x22, 0x62, 0x0a, 0x06, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x12, 0x0e,
-	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x69, 0x64, 0x12, 0x16,
-	0x0a, 0x06, 0x68, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06,
-	0x68, 0x65, 0x69, 0x67, 0x68, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x77, 0x69, 0x64, 0x74, 0x68, 0x18,
-	0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x77, 0x69, 0x64, 0x74, 0x68, 0x12, 0x1a, 0x0a, 0x08,
-	0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
-	0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x73, 0x22, 0x56, 0x0a, 0x07, 0x53, 0x63, 0x72, 0x65,
-	0x65, 0x6e, 0x73, 0x12, 0x22, 0x0a, 0x03, 0x73, 0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x10, 0x2e, 0x75, 0x67, 0x67, 0x6c, 0x79, 0x2e, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x53,
-	0x65, 0x74, 0x52, 0x03, 0x73, 0x65, 0x74, 0x12, 0x27, 0x0a, 0x07, 0x73, 0x63, 0x72, 0x65, 0x65,
-	0x6e, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x75, 0x67, 0x67, 0x6c, 0x79,
-	0x2e, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x52, 0x07, 0x73, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x73,
-	0x22, 0x2f, 0x0a, 0x09, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x53, 0x65, 0x74, 0x12, 0x0e, 0x0a,
-	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a,
-	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d,
-	0x65, 0x32, 0x3d, 0x0a, 0x08, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x65, 0x72, 0x12, 0x31, 0x0a,
-	0x0a, 0x47, 0x65, 0x74, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x73, 0x12, 0x10, 0x2e, 0x75, 0x67,
-	0x67, 0x6c, 0x79, 0x2e, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x53, 0x65, 0x74, 0x1a, 0x0d, 0x2e,
-	0x75, 0x67, 0x67, 0x6c, 0x79, 0x2e, 0x53, 0x63, 0x72, 0x65, 0x65, 0x6e, 0x22, 0x00, 0x30, 0x01,
-	0x42, 0x1c, 0x5a, 0x1a, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x72,
-	0x65, 0x6e, 0x64, 0x69, 0x63, 0x6f, 0x74, 0x74, 0x2f, 0x75, 0x67, 0x67, 0x6c, 0x79, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x67, 0x67, 0x6c, 0x79, 0x22, 0x29, 0x0a, 0x0b, 0x46, 0x65, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x73, 0x65, 0x6e, 0x64, 0x44, 0x61, 0x74, 0x61, 0x18,
+	0x0a, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x73, 0x65, 0x6e, 0x64, 0x44, 0x61, 0x74, 0x61, 0x22,
+	0x32, 0x0a, 0x0a, 0x50, 0x69, 0x78, 0x65, 0x6c, 0x53, 0x6c, 0x69, 0x63, 0x65, 0x12, 0x24, 0x0a,
+	0x06, 0x70, 0x69, 0x78, 0x65, 0x6c, 0x73, 0x18, 0x0a, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0c, 0x2e,
+	0x75, 0x67, 0x67, 0x6c, 0x79, 0x2e, 0x50, 0x69, 0x78, 0x65, 0x6c, 0x52, 0x06, 0x70, 0x69, 0x78,
+	0x65, 0x6c, 0x73, 0x22, 0x4f, 0x0a, 0x05, 0x50, 0x69, 0x78, 0x65, 0x6c, 0x12, 0x0c, 0x0a, 0x01,
+	0x63, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x05, 0x52, 0x01, 0x63, 0x12, 0x1c, 0x0a, 0x02, 0x73, 0x74,
+	0x18, 0x0b, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x75, 0x67, 0x67, 0x6c, 0x79, 0x2e, 0x53,
+	0x74, 0x79, 0x6c, 0x65, 0x52, 0x02, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x69, 0x73, 0x42, 0x6f,
+	0x72, 0x64, 0x65, 0x72, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x69, 0x73, 0x42, 0x6f,
+	0x72, 0x64, 0x65, 0x72, 0x22, 0xb3, 0x02, 0x0a, 0x06, 0x44, 0x69, 0x76, 0x42, 0x6f, 0x78, 0x12,
+	0x16, 0x0a, 0x06, 0x62, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x08, 0x52,
+	0x06, 0x62, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x12, 0x18, 0x0a, 0x07, 0x62, 0x6f, 0x72, 0x64, 0x65,
+	0x72, 0x57, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07, 0x62, 0x6f, 0x72, 0x64, 0x65, 0x72,
+	0x57, 0x12, 0x1e, 0x0a, 0x0a, 0x62, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x43, 0x68, 0x61, 0x72, 0x18,
+	0x0c, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0a, 0x62, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x43, 0x68, 0x61,
+	0x72, 0x12, 0x28, 0x0a, 0x08, 0x62, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x53, 0x74, 0x18, 0x0d, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x75, 0x67, 0x67, 0x6c, 0x79, 0x2e, 0x53, 0x74, 0x79, 0x6c,
+	0x65, 0x52, 0x08, 0x62, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x53, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x66,
+	0x69, 0x6c, 0x6c, 0x43, 0x68, 0x61, 0x72, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x66,
+	0x69, 0x6c, 0x6c, 0x43, 0x68, 0x61, 0x72, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x72, 0x74,
+	0x58, 0x18, 0x0f, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x73, 0x74, 0x61, 0x72, 0x74, 0x58, 0x12,
+	0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x72, 0x74, 0x59, 0x18, 0x10, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x06, 0x73, 0x74, 0x61, 0x72, 0x74, 0x59, 0x12, 0x14, 0x0a, 0x05, 0x77, 0x69, 0x64, 0x74, 0x68,
+	0x18, 0x11, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x77, 0x69, 0x64, 0x74, 0x68, 0x12, 0x16, 0x0a,
+	0x06, 0x48, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18, 0x12, 0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x48,
+	0x65, 0x69, 0x67, 0x68, 0x74, 0x12, 0x33, 0x0a, 0x0b, 0x72, 0x61, 0x77, 0x43, 0x6f, 0x6e, 0x74,
+	0x65, 0x6e, 0x74, 0x73, 0x18, 0x13, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x11, 0x2e, 0x75, 0x67, 0x67,
+	0x6c, 0x79, 0x2e, 0x50, 0x69, 0x78, 0x65, 0x6c, 0x53, 0x6c, 0x69, 0x63, 0x65, 0x52, 0x0b, 0x72,
+	0x61, 0x77, 0x43, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x73, 0x22, 0x2f, 0x0a, 0x08, 0x44, 0x69,
+	0x76, 0x42, 0x6f, 0x78, 0x65, 0x73, 0x12, 0x23, 0x0a, 0x05, 0x62, 0x6f, 0x78, 0x65, 0x73, 0x18,
+	0x0a, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x75, 0x67, 0x67, 0x6c, 0x79, 0x2e, 0x44, 0x69,
+	0x76, 0x42, 0x6f, 0x78, 0x52, 0x05, 0x62, 0x6f, 0x78, 0x65, 0x73, 0x22, 0x3b, 0x0a, 0x05, 0x53,
+	0x74, 0x79, 0x6c, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x66, 0x67, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x02, 0x66, 0x67, 0x12, 0x0e, 0x0a, 0x02, 0x62, 0x67, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x02, 0x62, 0x67, 0x12, 0x12, 0x0a, 0x04, 0x61, 0x74, 0x74, 0x72, 0x18, 0x0c, 0x20, 0x01,
+	0x28, 0x05, 0x52, 0x04, 0x61, 0x74, 0x74, 0x72, 0x32, 0x38, 0x0a, 0x04, 0x46, 0x65, 0x65, 0x64,
+	0x12, 0x30, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x44, 0x69, 0x76, 0x73, 0x12, 0x12, 0x2e, 0x75, 0x67,
+	0x67, 0x6c, 0x79, 0x2e, 0x46, 0x65, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x0f, 0x2e, 0x75, 0x67, 0x67, 0x6c, 0x79, 0x2e, 0x44, 0x69, 0x76, 0x42, 0x6f, 0x78, 0x65, 0x73,
+	0x22, 0x00, 0x42, 0x1c, 0x5a, 0x1a, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d,
+	0x2f, 0x72, 0x65, 0x6e, 0x64, 0x69, 0x63, 0x6f, 0x74, 0x74, 0x2f, 0x75, 0x67, 0x67, 0x6c, 0x79,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -246,22 +473,28 @@ func file_uggly_proto_rawDescGZIP() []byte {
 	return file_uggly_proto_rawDescData
 }
 
-var file_uggly_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_uggly_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_uggly_proto_goTypes = []interface{}{
-	(*Screen)(nil),    // 0: uggly.Screen
-	(*Screens)(nil),   // 1: uggly.Screens
-	(*ScreenSet)(nil), // 2: uggly.ScreenSet
+	(*FeedRequest)(nil), // 0: uggly.FeedRequest
+	(*PixelSlice)(nil),  // 1: uggly.PixelSlice
+	(*Pixel)(nil),       // 2: uggly.Pixel
+	(*DivBox)(nil),      // 3: uggly.DivBox
+	(*DivBoxes)(nil),    // 4: uggly.DivBoxes
+	(*Style)(nil),       // 5: uggly.Style
 }
 var file_uggly_proto_depIdxs = []int32{
-	2, // 0: uggly.Screens.set:type_name -> uggly.ScreenSet
-	0, // 1: uggly.Screens.screens:type_name -> uggly.Screen
-	2, // 2: uggly.Screener.GetScreens:input_type -> uggly.ScreenSet
-	0, // 3: uggly.Screener.GetScreens:output_type -> uggly.Screen
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	2, // 0: uggly.PixelSlice.pixels:type_name -> uggly.Pixel
+	5, // 1: uggly.Pixel.st:type_name -> uggly.Style
+	5, // 2: uggly.DivBox.borderSt:type_name -> uggly.Style
+	1, // 3: uggly.DivBox.rawContents:type_name -> uggly.PixelSlice
+	3, // 4: uggly.DivBoxes.boxes:type_name -> uggly.DivBox
+	0, // 5: uggly.Feed.GetDivs:input_type -> uggly.FeedRequest
+	4, // 6: uggly.Feed.GetDivs:output_type -> uggly.DivBoxes
+	6, // [6:7] is the sub-list for method output_type
+	5, // [5:6] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_uggly_proto_init() }
@@ -271,7 +504,7 @@ func file_uggly_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_uggly_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Screen); i {
+			switch v := v.(*FeedRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -283,7 +516,7 @@ func file_uggly_proto_init() {
 			}
 		}
 		file_uggly_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Screens); i {
+			switch v := v.(*PixelSlice); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -295,7 +528,43 @@ func file_uggly_proto_init() {
 			}
 		}
 		file_uggly_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ScreenSet); i {
+			switch v := v.(*Pixel); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_uggly_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DivBox); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_uggly_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DivBoxes); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_uggly_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Style); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -313,7 +582,7 @@ func file_uggly_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_uggly_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
