@@ -17,6 +17,7 @@ message Pixel {
 }
 
 message DivBox {
+    string name = 9;
     bool border = 10;
     int32 borderW = 11;
     int32 borderChar = 12;
@@ -29,6 +30,12 @@ message DivBox {
     repeated PixelSlice rawContents = 19;
 }
 
+message TextBlob {
+    string content = 10;
+    bool wrap = 11;
+    repeated string divNames = 15;
+}
+
 message DivBoxes {
     repeated DivBox boxes = 10;
 }
@@ -39,7 +46,16 @@ message Style {
     int32 attr = 12;
 }
 
+message Elements {
+    repeated TextBlob textBlobs = 10;
+}
+
+message FeedResponse {
+    DivBoxes divBoxes = 10;
+    Elements elements = 11;
+}
+
 service Feed {
-    rpc GetDivs(FeedRequest) returns(DivBoxes) {}
+    rpc GetFeed(FeedRequest) returns(FeedResponse) {}
 }
 

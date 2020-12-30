@@ -17,7 +17,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FeedClient interface {
-	GetDivs(ctx context.Context, in *FeedRequest, opts ...grpc.CallOption) (*DivBoxes, error)
+	GetFeed(ctx context.Context, in *FeedRequest, opts ...grpc.CallOption) (*FeedResponse, error)
 }
 
 type feedClient struct {
@@ -28,9 +28,9 @@ func NewFeedClient(cc grpc.ClientConnInterface) FeedClient {
 	return &feedClient{cc}
 }
 
-func (c *feedClient) GetDivs(ctx context.Context, in *FeedRequest, opts ...grpc.CallOption) (*DivBoxes, error) {
-	out := new(DivBoxes)
-	err := c.cc.Invoke(ctx, "/uggly.Feed/GetDivs", in, out, opts...)
+func (c *feedClient) GetFeed(ctx context.Context, in *FeedRequest, opts ...grpc.CallOption) (*FeedResponse, error) {
+	out := new(FeedResponse)
+	err := c.cc.Invoke(ctx, "/uggly.Feed/GetFeed", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (c *feedClient) GetDivs(ctx context.Context, in *FeedRequest, opts ...grpc.
 // All implementations must embed UnimplementedFeedServer
 // for forward compatibility
 type FeedServer interface {
-	GetDivs(context.Context, *FeedRequest) (*DivBoxes, error)
+	GetFeed(context.Context, *FeedRequest) (*FeedResponse, error)
 	mustEmbedUnimplementedFeedServer()
 }
 
@@ -49,8 +49,8 @@ type FeedServer interface {
 type UnimplementedFeedServer struct {
 }
 
-func (UnimplementedFeedServer) GetDivs(context.Context, *FeedRequest) (*DivBoxes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDivs not implemented")
+func (UnimplementedFeedServer) GetFeed(context.Context, *FeedRequest) (*FeedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFeed not implemented")
 }
 func (UnimplementedFeedServer) mustEmbedUnimplementedFeedServer() {}
 
@@ -65,20 +65,20 @@ func RegisterFeedServer(s grpc.ServiceRegistrar, srv FeedServer) {
 	s.RegisterService(&_Feed_serviceDesc, srv)
 }
 
-func _Feed_GetDivs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Feed_GetFeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FeedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FeedServer).GetDivs(ctx, in)
+		return srv.(FeedServer).GetFeed(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/uggly.Feed/GetDivs",
+		FullMethod: "/uggly.Feed/GetFeed",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeedServer).GetDivs(ctx, req.(*FeedRequest))
+		return srv.(FeedServer).GetFeed(ctx, req.(*FeedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -88,8 +88,8 @@ var _Feed_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*FeedServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetDivs",
-			Handler:    _Feed_GetDivs_Handler,
+			MethodName: "GetFeed",
+			Handler:    _Feed_GetFeed_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
