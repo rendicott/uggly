@@ -21,18 +21,20 @@ message DivBox {
     bool border = 10;
     int32 borderW = 11;
     int32 borderChar = 12;
-    Style borderSt = 13;
     int32 fillChar = 14;
     int32 startX = 15;
     int32 startY = 16;
     int32 width = 17;
     int32 Height = 18;
     repeated PixelSlice rawContents = 19;
+    Style borderSt = 20;
+    Style fillSt = 21;
 }
 
 message TextBlob {
     string content = 10;
     bool wrap = 11;
+    Style style = 12;
     repeated string divNames = 15;
 }
 
@@ -41,9 +43,9 @@ message DivBoxes {
 }
 
 message Style {
-    int32 fg = 10;
-    int32 bg = 11;
-    int32 attr = 12;
+    string fg = 10;
+    string bg = 11;
+    string attr = 12;
 }
 
 message Elements {
