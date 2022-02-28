@@ -2,9 +2,6 @@ syntax = "proto3";
 option go_package = "github.com/rendicott/uggly";
 package uggly;
 
-message FeedRequest {
-    bool sendData = 10;
-}
 
 message PixelSlice {
     repeated Pixel pixels = 10;
@@ -16,6 +13,11 @@ message Pixel {
     bool isBorder = 12;
 }
 
+/* DivBox is a core element of the protocol. No content can exist
+outside of a DivBox. It requires that some basic properties are included
+such as fill and border geometry but the rawContents property is open
+to fill with whatever content is desired. 
+*/
 message DivBox {
     string name = 9;
     bool border = 10;
@@ -31,6 +33,14 @@ message DivBox {
     Style fillSt = 21;
 }
 
+/* TextBlob is a special kind of element that natively understands
+text blocks intended for human readability. Obviously it has a content
+property but also understands things like text style and text wrap when 
+the text is larger than the width of the container it was assigned to. 
+
+A TextBlob can be assigned to multiple Divs in case you wanted to re-use
+text in multiple places for some reason. 
+*/
 message TextBlob {
     string content = 10;
     bool wrap = 11;
@@ -38,10 +48,18 @@ message TextBlob {
     repeated string divNames = 15;
 }
 
+/* DivBoxes is an array of DivBox */
 message DivBoxes {
     repeated DivBox boxes = 10;
 }
 
+/* Style is a base property used in divBox fill, border fill, and textboxes
+with fg being foreground color, bg being background color, and attr
+being text attributes like strikethrough and underline.
+
+It's essentially a passthrough of the capabilities of tcell's style
+https://github.com/gdamore/tcell/blob/master/style.go
+*/
 message Style {
     string fg = 10;
     string bg = 11;
@@ -52,12 +70,33 @@ message Elements {
     repeated TextBlob textBlobs = 10;
 }
 
-message FeedResponse {
+message SiteListing {
+    string name = 10;
+}
+
+message SiteResponse {
     DivBoxes divBoxes = 10;
     Elements elements = 11;
 }
 
+message SiteRequest {
+    string name = 10;
+}
+
+message FeedResponse {
+    repeated SiteListing sites = 10;
+    string notes = 11;
+}
+
+message FeedRequest {
+    bool sendData = 10;
+}
+
 service Feed {
     rpc GetFeed(FeedRequest) returns(FeedResponse) {}
+}
+
+service Site {
+    rpc GetSite(SiteRequest) returns(SiteResponse) {}
 }
 
