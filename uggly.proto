@@ -66,9 +66,17 @@ message Style {
     string attr = 12;
 }
 
+message Link {
+    string keyStroke = 10;
+    string siteName = 11;
+    string server = 12;
+    int32 port = 13;
+}
+
 message Elements {
     repeated TextBlob textBlobs = 10;
 }
+
 
 message SiteListing {
     string name = 10;
@@ -77,6 +85,8 @@ message SiteListing {
 message SiteResponse {
     DivBoxes divBoxes = 10;
     Elements elements = 11;
+    string name = 12;
+    repeated Link links = 13;
 }
 
 message SiteRequest {
