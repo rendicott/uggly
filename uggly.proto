@@ -68,7 +68,7 @@ message Style {
 
 message Link {
     string keyStroke = 10;
-    string siteName = 11;
+    string pageName = 11;
     string server = 12;
     int32 port = 13;
 }
@@ -78,23 +78,23 @@ message Elements {
 }
 
 
-message SiteListing {
+message PageListing {
     string name = 10;
 }
 
-message SiteResponse {
+message PageResponse {
     DivBoxes divBoxes = 10;
     Elements elements = 11;
     string name = 12;
     repeated Link links = 13;
 }
 
-message SiteRequest {
+message PageRequest {
     string name = 10;
 }
 
 message FeedResponse {
-    repeated SiteListing sites = 10;
+    repeated PageListing pages = 10;
     string notes = 11;
 }
 
@@ -106,7 +106,7 @@ service Feed {
     rpc GetFeed(FeedRequest) returns(FeedResponse) {}
 }
 
-service Site {
-    rpc GetSite(SiteRequest) returns(SiteResponse) {}
+service Page {
+    rpc GetPage(PageRequest) returns(PageResponse) {}
 }
 
