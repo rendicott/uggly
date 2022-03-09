@@ -70,7 +70,7 @@ message Link {
     string keyStroke = 10;
     string pageName = 11;
     string server = 12;
-    int32 port = 13;
+    string port = 13;
 }
 
 message Elements {
