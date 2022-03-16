@@ -104,86 +104,86 @@ var Feed_ServiceDesc = grpc.ServiceDesc{
 	Metadata: "uggly.proto",
 }
 
-// SiteClient is the client API for Site service.
+// PageClient is the client API for Page service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type SiteClient interface {
-	GetSite(ctx context.Context, in *SiteRequest, opts ...grpc.CallOption) (*SiteResponse, error)
+type PageClient interface {
+	GetPage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*PageResponse, error)
 }
 
-type siteClient struct {
+type pageClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewSiteClient(cc grpc.ClientConnInterface) SiteClient {
-	return &siteClient{cc}
+func NewPageClient(cc grpc.ClientConnInterface) PageClient {
+	return &pageClient{cc}
 }
 
-func (c *siteClient) GetSite(ctx context.Context, in *SiteRequest, opts ...grpc.CallOption) (*SiteResponse, error) {
-	out := new(SiteResponse)
-	err := c.cc.Invoke(ctx, "/uggly.Site/GetSite", in, out, opts...)
+func (c *pageClient) GetPage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*PageResponse, error) {
+	out := new(PageResponse)
+	err := c.cc.Invoke(ctx, "/uggly.Page/GetPage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// SiteServer is the server API for Site service.
-// All implementations must embed UnimplementedSiteServer
+// PageServer is the server API for Page service.
+// All implementations must embed UnimplementedPageServer
 // for forward compatibility
-type SiteServer interface {
-	GetSite(context.Context, *SiteRequest) (*SiteResponse, error)
-	mustEmbedUnimplementedSiteServer()
+type PageServer interface {
+	GetPage(context.Context, *PageRequest) (*PageResponse, error)
+	mustEmbedUnimplementedPageServer()
 }
 
-// UnimplementedSiteServer must be embedded to have forward compatible implementations.
-type UnimplementedSiteServer struct {
+// UnimplementedPageServer must be embedded to have forward compatible implementations.
+type UnimplementedPageServer struct {
 }
 
-func (UnimplementedSiteServer) GetSite(context.Context, *SiteRequest) (*SiteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSite not implemented")
+func (UnimplementedPageServer) GetPage(context.Context, *PageRequest) (*PageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPage not implemented")
 }
-func (UnimplementedSiteServer) mustEmbedUnimplementedSiteServer() {}
+func (UnimplementedPageServer) mustEmbedUnimplementedPageServer() {}
 
-// UnsafeSiteServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to SiteServer will
+// UnsafePageServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to PageServer will
 // result in compilation errors.
-type UnsafeSiteServer interface {
-	mustEmbedUnimplementedSiteServer()
+type UnsafePageServer interface {
+	mustEmbedUnimplementedPageServer()
 }
 
-func RegisterSiteServer(s grpc.ServiceRegistrar, srv SiteServer) {
-	s.RegisterService(&Site_ServiceDesc, srv)
+func RegisterPageServer(s grpc.ServiceRegistrar, srv PageServer) {
+	s.RegisterService(&Page_ServiceDesc, srv)
 }
 
-func _Site_GetSite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SiteRequest)
+func _Page_GetPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SiteServer).GetSite(ctx, in)
+		return srv.(PageServer).GetPage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/uggly.Site/GetSite",
+		FullMethod: "/uggly.Page/GetPage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SiteServer).GetSite(ctx, req.(*SiteRequest))
+		return srv.(PageServer).GetPage(ctx, req.(*PageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Site_ServiceDesc is the grpc.ServiceDesc for Site service.
+// Page_ServiceDesc is the grpc.ServiceDesc for Page service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Site_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "uggly.Site",
-	HandlerType: (*SiteServer)(nil),
+var Page_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "uggly.Page",
+	HandlerType: (*PageServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetSite",
-			Handler:    _Site_GetSite_Handler,
+			MethodName: "GetPage",
+			Handler:    _Page_GetPage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
