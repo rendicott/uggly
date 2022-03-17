@@ -91,6 +91,8 @@ message PageResponse {
 
 message PageRequest {
     string name = 10;
+    int64 clientWidth = 11;
+    int64 clientHeight = 12;
 }
 
 message FeedResponse {
