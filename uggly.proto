@@ -71,6 +71,38 @@ message Link {
     string pageName = 11;
     string server = 12;
     string port = 13;
+    string formName = 14;
+}
+
+message TextBox {
+	string name = 10;
+	int64 tabOrder = 11;
+	string defaultValue = 12;
+	string description = 13;
+	int64 positionX = 14;
+	int64 positionY = 15;
+	int64 height = 16;
+	int64 width = 17;
+	Style styleCursor = 18;
+	Style styleFill = 19;
+	Style styleText = 20;
+	Style styleDescription = 21;
+	bool showDescription = 22;	
+}
+
+message Form {
+    string name = 10;
+    repeated TextBox textBoxes = 11;
+}
+
+message FormData {
+    string name = 10;
+    repeated TextBoxData textBoxData = 11; 
+}
+
+message TextBoxData {
+    string name = 10;
+    string contents = 11;
 }
 
 message Elements {
@@ -87,12 +119,14 @@ message PageResponse {
     Elements elements = 11;
     string name = 12;
     repeated Link links = 13;
+    repeated Form forms = 14;
 }
 
 message PageRequest {
     string name = 10;
     int64 clientWidth = 11;
     int64 clientHeight = 12;
+    repeated FormData formData = 13;
 }
 
 message FeedResponse {
