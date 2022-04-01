@@ -76,13 +76,13 @@ message Link {
 
 message TextBox {
 	string name = 10;
-	int64 tabOrder = 11;
+	int32 tabOrder = 11;
 	string defaultValue = 12;
 	string description = 13;
-	int64 positionX = 14;
-	int64 positionY = 15;
-	int64 height = 16;
-	int64 width = 17;
+	int32 positionX = 14; // relative within DivBox
+	int32 positionY = 15; // relative within DivBox
+	int32 height = 16;
+	int32 width = 17;
 	Style styleCursor = 18;
 	Style styleFill = 19;
 	Style styleText = 20;
@@ -92,7 +92,9 @@ message TextBox {
 
 message Form {
     string name = 10;
-    repeated TextBox textBoxes = 11;
+    string divName = 11;
+    repeated TextBox textBoxes = 12;
+    Link submitLink = 13;
 }
 
 message FormData {
@@ -107,6 +109,7 @@ message TextBoxData {
 
 message Elements {
     repeated TextBlob textBlobs = 10;
+    repeated Form forms = 11;
 }
 
 
@@ -119,13 +122,12 @@ message PageResponse {
     Elements elements = 11;
     string name = 12;
     repeated Link links = 13;
-    repeated Form forms = 14;
 }
 
 message PageRequest {
     string name = 10;
-    int64 clientWidth = 11;
-    int64 clientHeight = 12;
+    int32 clientWidth = 11;
+    int32 clientHeight = 12;
     repeated FormData formData = 13;
 }
 
