@@ -2,11 +2,15 @@ syntax = "proto3";
 option go_package = "github.com/rendicott/uggly";
 package uggly;
 
-
+// PixelSlice is an array of Pixel
 message PixelSlice {
     repeated Pixel pixels = 10;
 }
 
+// Pixel can be used in RawContents. Not 
+// currently used but could be used in the future
+// to give servers raw access to pixels for non-UI
+// use cases such as animations or gaming.  
 message Pixel {
     int32 c = 10;
     Style st = 11;
@@ -28,7 +32,7 @@ message DivBox {
     int32 startY = 16;
     int32 width = 17;
     int32 Height = 18;
-    repeated PixelSlice rawContents = 19;
+    repeated PixelSlice rawContents = 19; // not currently used
     Style borderSt = 20;
     Style fillSt = 21;
 }
@@ -66,6 +70,11 @@ message Style {
     string attr = 12;
 }
 
+// Link contains information about keyboard shortcuts
+// and destinations for actions. The client will determine
+// from context whether a Link is to a server page or is 
+// to be used to pass polling context to a Form that it
+// already receieved in a PageResponse.
 message Link {
     string keyStroke = 10;
     string pageName = 11;
@@ -74,6 +83,8 @@ message Link {
     string formName = 14;
 }
 
+// TextBox contains the properties sent by the server
+// for the client to render. 
 message TextBox {
 	string name = 10;
 	int32 tabOrder = 11;
@@ -90,6 +101,15 @@ message TextBox {
 	bool showDescription = 22;	
 }
 
+// The Form is sent by the server to the client
+// as part of the PageResponse. It contains
+// the Form name, the DivBox it should be placed
+// within (TextBox PositionX and Y coordinates
+// are relative to the containing DivBox) and a 
+// list of the TextBox's included in this form.
+// It also supports a parameter for a Link that can
+// be used as a return address when this Form is 
+// submitted in a PageRequest
 message Form {
     string name = 10;
     string divName = 11;
@@ -97,26 +117,51 @@ message Form {
     Link submitLink = 13;
 }
 
+// FormData contains the form name and any
+// TextBoxData that was in the form when
+// the FormData was sent in the PageRequest
 message FormData {
     string name = 10;
     repeated TextBoxData textBoxData = 11; 
 }
 
+// TextBoxData contains the text box's field
+// name and whatever contents were in it
+// when the PageRequest was sent with FormData
 message TextBoxData {
     string name = 10;
     string contents = 11;
 }
 
+// Elements contains all non-DivBox related
+// content that could be included in a PageResponse.
+// Right now this contains TextBlobs and Forms
+// but will be used for future elements if needed. 
+// For example, if determined that clients should
+// handle all Table rendering in the future or something.
+// Right now tables would have to be stick built by 
+// the server using DivBoxes and TextBlobs
 message Elements {
     repeated TextBlob textBlobs = 10;
     repeated Form forms = 11;
 }
 
-
+// A PageListing is basically a key/value
+// pair of page name and an optional 
+// description. The client can choose to render
+// this however it wants and the client injects
+// it's own "links" to this content. This is a
+// lazy way of exposing all the server's content
+// without having to build nav menus and manage
+// links
 message PageListing {
     string name = 10;
+    string description = 11;
 }
 
+// The PageResponse contains modular content
+// that the server wishes the client to display
+// in the form of DivBoxes, Elements, and Links. 
 message PageResponse {
     DivBoxes divBoxes = 10;
     Elements elements = 11;
@@ -124,6 +169,17 @@ message PageResponse {
     repeated Link links = 13;
 }
 
+// A PageRequest contains the name of the 
+// desired page and some metadata about the
+// cient height and width. The server can choose
+// to ignore the width and height if it insists 
+// on statically sized content. Also, the server could
+// generate a PageResponse saying something like 
+// "this server insists on a minimum height to view
+// content" for example. 
+//
+// Also included is any FormData the client wishes
+// to send with this PageRequest. 
 message PageRequest {
     string name = 10;
     int32 clientWidth = 11;
@@ -131,19 +187,38 @@ message PageRequest {
     repeated FormData formData = 13;
 }
 
+// A FeedResponse is essentially a list of 
+// Pages that the server wishes to expose
+// to the client. The server can obviously choose
+// to hide some Pages or if it generates Pages
+// dynamically it may not even be able to provide
+// an accurate listing. 
 message FeedResponse {
     repeated PageListing pages = 10;
-    string notes = 11;
+    string notes = 11; // reserved for future use
 }
 
+// A FeedRequest really needs no properties
+// as it's just a call from the client for the
+// server to send a Feed if it has one.
 message FeedRequest {
-    bool sendData = 10;
+    bool sendData = 10; // reserved for future use
 }
 
+// Feed service can be implemented by the server
+// and must provide a FeedResponse for a given FeedRequest.
+// This is to be used as somewhat of a server index of 
+// available Pages when the server chooses to implement.
+// It is strongly encouraged to implement a Feed because
+// it makes for quality of life improvements for the client's
+// user
 service Feed {
     rpc GetFeed(FeedRequest) returns(FeedResponse) {}
 }
 
+// In order for a server to serve any content it must 
+// implement the Page service which returns PageResponse
+// for a given PageRequest
 service Page {
     rpc GetPage(PageRequest) returns(PageResponse) {}
 }

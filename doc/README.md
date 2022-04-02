@@ -56,7 +56,7 @@ to fill with whatever content is desired.
 | startY | [int32](#int32) |  |  |
 | width | [int32](#int32) |  |  |
 | Height | [int32](#int32) |  |  |
-| rawContents | [PixelSlice](#uggly-PixelSlice) | repeated |  |
+| rawContents | [PixelSlice](#uggly-PixelSlice) | repeated | not currently used |
 | borderSt | [Style](#uggly-Style) |  |  |
 | fillSt | [Style](#uggly-Style) |  |  |
 
@@ -83,7 +83,14 @@ DivBoxes is an array of DivBox
 <a name="uggly-Elements"></a>
 
 ### Elements
-
+Elements contains all non-DivBox related
+content that could be included in a PageResponse.
+Right now this contains TextBlobs and Forms
+but will be used for future elements if needed. 
+For example, if determined that clients should
+handle all Table rendering in the future or something.
+Right now tables would have to be stick built by 
+the server using DivBoxes and TextBlobs
 
 
 | Field | Type | Label | Description |
@@ -99,12 +106,14 @@ DivBoxes is an array of DivBox
 <a name="uggly-FeedRequest"></a>
 
 ### FeedRequest
-
+A FeedRequest really needs no properties
+as it&#39;s just a call from the client for the
+server to send a Feed if it has one.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| sendData | [bool](#bool) |  |  |
+| sendData | [bool](#bool) |  | reserved for future use |
 
 
 
@@ -114,13 +123,18 @@ DivBoxes is an array of DivBox
 <a name="uggly-FeedResponse"></a>
 
 ### FeedResponse
-
+A FeedResponse is essentially a list of 
+Pages that the server wishes to expose
+to the client. The server can obviously choose
+to hide some Pages or if it generates Pages
+dynamically it may not even be able to provide
+an accurate listing.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pages | [PageListing](#uggly-PageListing) | repeated |  |
-| notes | [string](#string) |  |  |
+| notes | [string](#string) |  | reserved for future use |
 
 
 
@@ -130,7 +144,15 @@ DivBoxes is an array of DivBox
 <a name="uggly-Form"></a>
 
 ### Form
-
+The Form is sent by the server to the client
+as part of the PageResponse. It contains
+the Form name, the DivBox it should be placed
+within (TextBox PositionX and Y coordinates
+are relative to the containing DivBox) and a 
+list of the TextBox&#39;s included in this form.
+It also supports a parameter for a Link that can
+be used as a return address when this Form is 
+submitted in a PageRequest
 
 
 | Field | Type | Label | Description |
@@ -148,7 +170,9 @@ DivBoxes is an array of DivBox
 <a name="uggly-FormData"></a>
 
 ### FormData
-
+FormData contains the form name and any
+TextBoxData that was in the form when
+the FormData was sent in the PageRequest
 
 
 | Field | Type | Label | Description |
@@ -164,7 +188,11 @@ DivBoxes is an array of DivBox
 <a name="uggly-Link"></a>
 
 ### Link
-
+Link contains information about keyboard shortcuts
+and destinations for actions. The client will determine
+from context whether a Link is to a server page or is 
+to be used to pass polling context to a Form that it
+already receieved in a PageResponse.
 
 
 | Field | Type | Label | Description |
@@ -183,12 +211,20 @@ DivBoxes is an array of DivBox
 <a name="uggly-PageListing"></a>
 
 ### PageListing
-
+A PageListing is basically a key/value
+pair of page name and an optional 
+description. The client can choose to render
+this however it wants and the client injects
+it&#39;s own &#34;links&#34; to this content. This is a
+lazy way of exposing all the server&#39;s content
+without having to build nav menus and manage
+links
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  |  |
+| description | [string](#string) |  |  |
 
 
 
@@ -198,7 +234,17 @@ DivBoxes is an array of DivBox
 <a name="uggly-PageRequest"></a>
 
 ### PageRequest
+A PageRequest contains the name of the 
+desired page and some metadata about the
+cient height and width. The server can choose
+to ignore the width and height if it insists 
+on statically sized content. Also, the server could
+generate a PageResponse saying something like 
+&#34;this server insists on a minimum height to view
+content&#34; for example. 
 
+Also included is any FormData the client wishes
+to send with this PageRequest.
 
 
 | Field | Type | Label | Description |
@@ -216,7 +262,9 @@ DivBoxes is an array of DivBox
 <a name="uggly-PageResponse"></a>
 
 ### PageResponse
-
+The PageResponse contains modular content
+that the server wishes the client to display
+in the form of DivBoxes, Elements, and Links.
 
 
 | Field | Type | Label | Description |
@@ -234,7 +282,10 @@ DivBoxes is an array of DivBox
 <a name="uggly-Pixel"></a>
 
 ### Pixel
-
+Pixel can be used in RawContents. Not 
+currently used but could be used in the future
+to give servers raw access to pixels for non-UI
+use cases such as animations or gaming.
 
 
 | Field | Type | Label | Description |
@@ -251,7 +302,7 @@ DivBoxes is an array of DivBox
 <a name="uggly-PixelSlice"></a>
 
 ### PixelSlice
-
+PixelSlice is an array of Pixel
 
 
 | Field | Type | Label | Description |
@@ -312,7 +363,8 @@ text in multiple places for some reason.
 <a name="uggly-TextBox"></a>
 
 ### TextBox
-
+TextBox contains the properties sent by the server
+for the client to render.
 
 
 | Field | Type | Label | Description |
@@ -339,7 +391,9 @@ text in multiple places for some reason.
 <a name="uggly-TextBoxData"></a>
 
 ### TextBoxData
-
+TextBoxData contains the text box&#39;s field
+name and whatever contents were in it
+when the PageRequest was sent with FormData
 
 
 | Field | Type | Label | Description |
@@ -361,7 +415,13 @@ text in multiple places for some reason.
 <a name="uggly-Feed"></a>
 
 ### Feed
-
+Feed service can be implemented by the server
+and must provide a FeedResponse for a given FeedRequest.
+This is to be used as somewhat of a server index of 
+available Pages when the server chooses to implement.
+It is strongly encouraged to implement a Feed because
+it makes for quality of life improvements for the client&#39;s
+user
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
@@ -371,7 +431,9 @@ text in multiple places for some reason.
 <a name="uggly-Page"></a>
 
 ### Page
-
+In order for a server to serve any content it must 
+implement the Page service which returns PageResponse
+for a given PageRequest
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
