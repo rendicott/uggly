@@ -202,6 +202,8 @@ already receieved in a PageResponse.
 | server | [string](#string) |  |  |
 | port | [string](#string) |  |  |
 | formName | [string](#string) |  |  |
+| connString | [string](#string) |  |  |
+| secure | [bool](#bool) |  |  |
 
 
 
@@ -253,6 +255,9 @@ to send with this PageRequest.
 | clientWidth | [int32](#int32) |  |  |
 | clientHeight | [int32](#int32) |  |  |
 | formData | [FormData](#uggly-FormData) | repeated |  |
+| server | [string](#string) |  |  |
+| port | [string](#string) |  |  |
+| secure | [bool](#bool) |  |  |
 
 
 

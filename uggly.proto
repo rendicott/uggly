@@ -81,6 +81,8 @@ message Link {
     string server = 12;
     string port = 13;
     string formName = 14;
+    string connString = 15;
+    bool secure = 16;
 }
 
 // TextBox contains the properties sent by the server
@@ -185,6 +187,9 @@ message PageRequest {
     int32 clientWidth = 11;
     int32 clientHeight = 12;
     repeated FormData formData = 13;
+    string server = 14;
+    string port = 15;
+    bool secure = 16;
 }
 
 // A FeedResponse is essentially a list of 
