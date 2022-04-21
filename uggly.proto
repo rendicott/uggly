@@ -2,14 +2,8 @@ syntax = "proto3";
 option go_package = "github.com/rendicott/uggly";
 package uggly;
 
-// PixelSlice is an array of Pixel
-message PixelSlice {
-    repeated Pixel pixels = 10;
-}
 
-// Pixel can be used in RawContents. Not 
-// currently used but could be used in the future
-// to give servers raw access to pixels for non-UI
+// Pixel can be used in RawContents. Could be honored for
 // use cases such as animations or gaming.  
 message Pixel {
     int32 c = 10;
@@ -32,7 +26,7 @@ message DivBox {
     int32 startY = 16;
     int32 width = 17;
     int32 Height = 18;
-    repeated PixelSlice rawContents = 19; // not currently used
+    repeated Pixel pixels = 19; 
     Style borderSt = 20;
     Style fillSt = 21;
 }
@@ -80,9 +74,25 @@ message Link {
     string pageName = 11;
     string server = 12;
     string port = 13;
-    string formName = 14;
-    string connString = 15;
     bool secure = 16;
+}
+
+message DivScroll {
+	string divName = 10;
+	bool down = 11;
+}
+
+message FormActivation {
+	string formName = 10;
+}
+
+message KeyStroke {
+	string keyStroke = 10;
+	oneof Action {
+		Link link = 20;
+		DivScroll divScroll = 21;
+		FormActivation formActivation = 22;
+	}
 }
 
 // TextBox contains the properties sent by the server
@@ -101,6 +111,7 @@ message TextBox {
 	Style styleText = 20;
 	Style styleDescription = 21;
 	bool showDescription = 22;	
+        bool password = 23;
 }
 
 // The Form is sent by the server to the client
@@ -168,7 +179,42 @@ message PageResponse {
     DivBoxes divBoxes = 10;
     Elements elements = 11;
     string name = 12;
-    repeated Link links = 13;
+    repeated KeyStroke keyStrokes = 13;
+    repeated Cookie setCookies = 14;
+}
+
+
+// Cookie loosly follows the cookie spec (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie)
+// but does not include protections for browser side code as today the uggly spec does not support
+// client side code. 
+message Cookie {
+    string key = 10; // standard key or field name of cookie
+    string value = 11; // standard value of cookie
+
+    // the server which requested this cookie to be set. 
+    // should be server only without including port
+    // e.g., "localhost" or "mysubdomain.domain.com"
+    string server = 12; 
+
+    // private Cookies will never be sent back to server
+    bool private = 13; 
+
+    // date when cookie expires relative to client in RFC1123 format. 
+    // If improperly formatted will just be ignored and cookie will be treated as session cookie.
+    string expires = 14; 
+    enum SameSite {
+        STRICT = 0; // cookie only sent to same site that set it
+        NONE = 1; // cookie can be sent cross site but only if Secure is set
+    }
+    SameSite sameSite = 15;	
+
+    string page = 16; // if this cookie should only be sent back on specific pages
+    bool secure = 17; // if this cookie should only be sent when connection is secure
+
+    // indicates that this cookie should be sent in header metadata instead of body. 
+    // This is useful if the server wants to pre-filter traffic, for example if a 
+    //request is not authenticated it can avoid processing the full PageRequest
+    bool metadata = 18;
 }
 
 // A PageRequest contains the name of the 
@@ -190,6 +236,7 @@ message PageRequest {
     string server = 14;
     string port = 15;
     bool secure = 16;
+    repeated Cookie sendCookies = 17;
 }
 
 // A FeedResponse is essentially a list of 

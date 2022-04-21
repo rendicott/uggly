@@ -4,23 +4,28 @@
 ## Table of Contents
 
 - [uggly.proto](#uggly-proto)
+    - [Cookie](#uggly-Cookie)
     - [DivBox](#uggly-DivBox)
     - [DivBoxes](#uggly-DivBoxes)
+    - [DivScroll](#uggly-DivScroll)
     - [Elements](#uggly-Elements)
     - [FeedRequest](#uggly-FeedRequest)
     - [FeedResponse](#uggly-FeedResponse)
     - [Form](#uggly-Form)
+    - [FormActivation](#uggly-FormActivation)
     - [FormData](#uggly-FormData)
+    - [KeyStroke](#uggly-KeyStroke)
     - [Link](#uggly-Link)
     - [PageListing](#uggly-PageListing)
     - [PageRequest](#uggly-PageRequest)
     - [PageResponse](#uggly-PageResponse)
     - [Pixel](#uggly-Pixel)
-    - [PixelSlice](#uggly-PixelSlice)
     - [Style](#uggly-Style)
     - [TextBlob](#uggly-TextBlob)
     - [TextBox](#uggly-TextBox)
     - [TextBoxData](#uggly-TextBoxData)
+  
+    - [Cookie.SameSite](#uggly-Cookie-SameSite)
   
     - [Feed](#uggly-Feed)
     - [Page](#uggly-Page)
@@ -33,6 +38,31 @@
 <p align="right"><a href="#top">Top</a></p>
 
 ## uggly.proto
+
+
+
+<a name="uggly-Cookie"></a>
+
+### Cookie
+Cookie loosly follows the cookie spec (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie)
+but does not include protections for browser side code as today the uggly spec does not support
+client side code.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  | standard key or field name of cookie |
+| value | [string](#string) |  | standard value of cookie |
+| server | [string](#string) |  | the server which requested this cookie to be set. should be server only without including port e.g., &#34;localhost&#34; or &#34;mysubdomain.domain.com&#34; |
+| private | [bool](#bool) |  | private Cookies will never be sent back to server |
+| expires | [string](#string) |  | date when cookie expires relative to client in RFC1123 format. If improperly formatted will just be ignored and cookie will be treated as session cookie. |
+| sameSite | [Cookie.SameSite](#uggly-Cookie-SameSite) |  |  |
+| page | [string](#string) |  | if this cookie should only be sent back on specific pages |
+| secure | [bool](#bool) |  | if this cookie should only be sent when connection is secure |
+| metadata | [bool](#bool) |  | indicates that this cookie should be sent in header metadata instead of body. This is useful if the server wants to pre-filter traffic, for example if a request is not authenticated it can avoid processing the full PageRequest |
+
+
+
 
 
 
@@ -56,7 +86,7 @@ to fill with whatever content is desired.
 | startY | [int32](#int32) |  |  |
 | width | [int32](#int32) |  |  |
 | Height | [int32](#int32) |  |  |
-| rawContents | [PixelSlice](#uggly-PixelSlice) | repeated | not currently used |
+| pixels | [Pixel](#uggly-Pixel) | repeated |  |
 | borderSt | [Style](#uggly-Style) |  |  |
 | fillSt | [Style](#uggly-Style) |  |  |
 
@@ -74,6 +104,22 @@ DivBoxes is an array of DivBox
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | boxes | [DivBox](#uggly-DivBox) | repeated |  |
+
+
+
+
+
+
+<a name="uggly-DivScroll"></a>
+
+### DivScroll
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| divName | [string](#string) |  |  |
+| down | [bool](#bool) |  |  |
 
 
 
@@ -167,6 +213,21 @@ submitted in a PageRequest
 
 
 
+<a name="uggly-FormActivation"></a>
+
+### FormActivation
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| formName | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="uggly-FormData"></a>
 
 ### FormData
@@ -179,6 +240,24 @@ the FormData was sent in the PageRequest
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  |  |
 | textBoxData | [TextBoxData](#uggly-TextBoxData) | repeated |  |
+
+
+
+
+
+
+<a name="uggly-KeyStroke"></a>
+
+### KeyStroke
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| keyStroke | [string](#string) |  |  |
+| link | [Link](#uggly-Link) |  |  |
+| divScroll | [DivScroll](#uggly-DivScroll) |  |  |
+| formActivation | [FormActivation](#uggly-FormActivation) |  |  |
 
 
 
@@ -201,8 +280,6 @@ already receieved in a PageResponse.
 | pageName | [string](#string) |  |  |
 | server | [string](#string) |  |  |
 | port | [string](#string) |  |  |
-| formName | [string](#string) |  |  |
-| connString | [string](#string) |  |  |
 | secure | [bool](#bool) |  |  |
 
 
@@ -258,6 +335,7 @@ to send with this PageRequest.
 | server | [string](#string) |  |  |
 | port | [string](#string) |  |  |
 | secure | [bool](#bool) |  |  |
+| sendCookies | [Cookie](#uggly-Cookie) | repeated |  |
 
 
 
@@ -277,7 +355,8 @@ in the form of DivBoxes, Elements, and Links.
 | divBoxes | [DivBoxes](#uggly-DivBoxes) |  |  |
 | elements | [Elements](#uggly-Elements) |  |  |
 | name | [string](#string) |  |  |
-| links | [Link](#uggly-Link) | repeated |  |
+| keyStrokes | [KeyStroke](#uggly-KeyStroke) | repeated |  |
+| setCookies | [Cookie](#uggly-Cookie) | repeated |  |
 
 
 
@@ -287,9 +366,7 @@ in the form of DivBoxes, Elements, and Links.
 <a name="uggly-Pixel"></a>
 
 ### Pixel
-Pixel can be used in RawContents. Not 
-currently used but could be used in the future
-to give servers raw access to pixels for non-UI
+Pixel can be used in RawContents. Could be honored for
 use cases such as animations or gaming.
 
 
@@ -298,21 +375,6 @@ use cases such as animations or gaming.
 | c | [int32](#int32) |  |  |
 | st | [Style](#uggly-Style) |  |  |
 | isBorder | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="uggly-PixelSlice"></a>
-
-### PixelSlice
-PixelSlice is an array of Pixel
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pixels | [Pixel](#uggly-Pixel) | repeated |  |
 
 
 
@@ -387,6 +449,7 @@ for the client to render.
 | styleText | [Style](#uggly-Style) |  |  |
 | styleDescription | [Style](#uggly-Style) |  |  |
 | showDescription | [bool](#bool) |  |  |
+| password | [bool](#bool) |  |  |
 
 
 
@@ -411,6 +474,18 @@ when the PageRequest was sent with FormData
 
 
  
+
+
+<a name="uggly-Cookie-SameSite"></a>
+
+### Cookie.SameSite
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| STRICT | 0 | cookie only sent to same site that set it |
+| NONE | 1 | cookie can be sent cross site but only if Secure is set |
+
 
  
 
