@@ -109,6 +109,7 @@ var Feed_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PageClient interface {
 	GetPage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*PageResponse, error)
+	GetPageStream(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (Page_GetPageStreamClient, error)
 }
 
 type pageClient struct {
@@ -128,11 +129,44 @@ func (c *pageClient) GetPage(ctx context.Context, in *PageRequest, opts ...grpc.
 	return out, nil
 }
 
+func (c *pageClient) GetPageStream(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (Page_GetPageStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Page_ServiceDesc.Streams[0], "/uggly.Page/GetPageStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &pageGetPageStreamClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Page_GetPageStreamClient interface {
+	Recv() (*PageResponse, error)
+	grpc.ClientStream
+}
+
+type pageGetPageStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *pageGetPageStreamClient) Recv() (*PageResponse, error) {
+	m := new(PageResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // PageServer is the server API for Page service.
 // All implementations must embed UnimplementedPageServer
 // for forward compatibility
 type PageServer interface {
 	GetPage(context.Context, *PageRequest) (*PageResponse, error)
+	GetPageStream(*PageRequest, Page_GetPageStreamServer) error
 	mustEmbedUnimplementedPageServer()
 }
 
@@ -142,6 +176,9 @@ type UnimplementedPageServer struct {
 
 func (UnimplementedPageServer) GetPage(context.Context, *PageRequest) (*PageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPage not implemented")
+}
+func (UnimplementedPageServer) GetPageStream(*PageRequest, Page_GetPageStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetPageStream not implemented")
 }
 func (UnimplementedPageServer) mustEmbedUnimplementedPageServer() {}
 
@@ -174,6 +211,27 @@ func _Page_GetPage_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Page_GetPageStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(PageRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PageServer).GetPageStream(m, &pageGetPageStreamServer{stream})
+}
+
+type Page_GetPageStreamServer interface {
+	Send(*PageResponse) error
+	grpc.ServerStream
+}
+
+type pageGetPageStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *pageGetPageStreamServer) Send(m *PageResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // Page_ServiceDesc is the grpc.ServiceDesc for Page service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -186,6 +244,12 @@ var Page_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Page_GetPage_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetPageStream",
+			Handler:       _Page_GetPageStream_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "uggly.proto",
 }

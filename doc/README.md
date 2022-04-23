@@ -281,6 +281,7 @@ already receieved in a PageResponse.
 | server | [string](#string) |  |  |
 | port | [string](#string) |  |  |
 | secure | [bool](#bool) |  |  |
+| stream | [bool](#bool) |  |  |
 
 
 
@@ -336,6 +337,7 @@ to send with this PageRequest.
 | port | [string](#string) |  |  |
 | secure | [bool](#bool) |  |  |
 | sendCookies | [Cookie](#uggly-Cookie) | repeated |  |
+| stream | [bool](#bool) |  |  |
 
 
 
@@ -357,6 +359,7 @@ in the form of DivBoxes, Elements, and Links.
 | name | [string](#string) |  |  |
 | keyStrokes | [KeyStroke](#uggly-KeyStroke) | repeated |  |
 | setCookies | [Cookie](#uggly-Cookie) | repeated |  |
+| streamDelayMs | [int32](#int32) |  | if the response is part of a stream then this is the time in milliseconds the client should wait before drawing the next request |
 
 
 
@@ -518,6 +521,7 @@ for a given PageRequest
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | GetPage | [PageRequest](#uggly-PageRequest) | [PageResponse](#uggly-PageResponse) |  |
+| GetPageStream | [PageRequest](#uggly-PageRequest) | [PageResponse](#uggly-PageResponse) stream |  |
 
  
 

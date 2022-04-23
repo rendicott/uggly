@@ -75,6 +75,7 @@ message Link {
     string server = 12;
     string port = 13;
     bool secure = 16;
+    bool stream = 17;
 }
 
 message DivScroll {
@@ -181,6 +182,11 @@ message PageResponse {
     string name = 12;
     repeated KeyStroke keyStrokes = 13;
     repeated Cookie setCookies = 14;
+
+    // if the response is part of a stream then this is
+    // the time in milliseconds the client should wait 
+    // before drawing the next request
+    int32 streamDelayMs = 15; 
 }
 
 
@@ -237,6 +243,7 @@ message PageRequest {
     string port = 15;
     bool secure = 16;
     repeated Cookie sendCookies = 17;
+    bool stream = 18;
 }
 
 // A FeedResponse is essentially a list of 
@@ -273,5 +280,6 @@ service Feed {
 // for a given PageRequest
 service Page {
     rpc GetPage(PageRequest) returns(PageResponse) {}
+    rpc GetPageStream(PageRequest) returns (stream PageResponse) {}
 }
 
