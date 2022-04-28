@@ -1,4 +1,4 @@
-version := 0.1.2
+version := 0.1.3
 
 release: build push
 
@@ -28,6 +28,7 @@ python:
 
 push:
 	git add uggly.proto
+	git add python
 	git add README.md
 	git add Makefile
 	git add ./doc
