@@ -2,13 +2,26 @@ version := 0.1.2
 
 release: build push
 
-build:
+build: go python
+
+prereq:
+	pip install grpcio-tools
+
+go:
 	protoc \
 		--go_out=. \
 		--go_opt=paths=source_relative \
 		--go-grpc_out=. \
 		--go-grpc_opt=paths=source_relative \
 		--doc_out=./doc --doc_opt=markdown,README.md \
+		uggly.proto
+
+python: 
+	python3 \
+		-m grpc_tools.protoc \
+		-I . \
+		--python_out=. \
+		--grpc_python_out=. \
 		uggly.proto
 
 push:
