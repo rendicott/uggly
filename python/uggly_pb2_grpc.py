@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import uggly_pb2 as uggly__pb2
+import uggly as uggly__pb2
 
 
 class FeedStub(object):

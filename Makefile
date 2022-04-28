@@ -6,6 +6,7 @@ build: go python
 
 prereq:
 	pip install grpcio-tools
+	pip install "betterproto[compiler]"
 
 go:
 	protoc \
@@ -17,11 +18,12 @@ go:
 		uggly.proto
 
 python: 
+	mkdir python
 	python3 \
 		-m grpc_tools.protoc \
 		-I . \
-		--python_out=. \
-		--grpc_python_out=. \
+		--python_betterproto_out=python \
+		--grpc_python_out=python \
 		uggly.proto
 
 push:
