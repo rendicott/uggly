@@ -1,7 +1,7 @@
 # uggly
 Protocol for TUIOW (terminal user interface over the wire)
 
-Protobuf definition currently used for gRPC and is compiled for Golang.
+Protobuf definition currently used for gRPC and is compiled for Golang and Python.
 
 Docs are generated using the handy [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc) package and can be found [here](./doc).
 

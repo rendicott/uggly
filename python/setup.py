@@ -8,13 +8,14 @@ import uggly
 
 
 def long_description():
-    with open('README.md', encoding='utf-8') as f:
+    with open('../README.md', encoding='utf-8') as f:
         return f.read()
 
 
 setup(
     name='uggly',
-    version=uggly.__version__,
+    use_scm_version=True,
+    #version=uggly.__version__,
     description=uggly.__doc__.strip(),
     long_description=long_description(),
     long_description_content_type='text/markdown',
