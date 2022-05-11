@@ -8,3 +8,5 @@ This is a hello world example of a server written in Go.
 1. go run server.go -port 9999
 1. open [client](https://github.com/rendicott/uggly-client/releases/latest) and navigate to site
    1. e.g., `./ugglyc -UGRI ugtp://localhost:9999`
+
+![](./ss.png)
