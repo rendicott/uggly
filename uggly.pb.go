@@ -80,15 +80,15 @@ type DivBox struct {
 	// the width of the border, will stay inside the stated overall dimensions
 	// and work its way inward
 	BorderW int32 `protobuf:"varint,11,opt,name=borderW,proto3" json:"borderW,omitempty"`
-	// The character to use as a border character (e.g., "*") but represented as rune
-	// For example, in Python this would be 'ord("*")' and Go it would be
-	// []rune("*")[0]
+	// The character to use as a border character (e.g., "#") but represented as rune
+	// For example, in Python this would be 'ord("#")' and Go it would be
+	// []rune("#")[0]
 	BorderChar int32 `protobuf:"varint,12,opt,name=borderChar,proto3" json:"borderChar,omitempty"`
 	// if the DivBox should be filled with a char as a texture. Follows same
 	// rune rules as borderChar.
 	FillChar int32  `protobuf:"varint,14,opt,name=fillChar,proto3" json:"fillChar,omitempty"`
 	StartX   int32  `protobuf:"varint,15,opt,name=startX,proto3" json:"startX,omitempty"`    // position on the X axis where the box should start
-	StartY   int32  `protobuf:"varint,16,opt,name=startY,proto3" json:"startY,omitempty"`    // position on the Y acis where the box should start
+	StartY   int32  `protobuf:"varint,16,opt,name=startY,proto3" json:"startY,omitempty"`    // position on the Y axis where the box should start
 	Width    int32  `protobuf:"varint,17,opt,name=width,proto3" json:"width,omitempty"`      // overall width of the box
 	Height   int32  `protobuf:"varint,18,opt,name=Height,proto3" json:"Height,omitempty"`    // overall height of the box
 	BorderSt *Style `protobuf:"bytes,20,opt,name=borderSt,proto3" json:"borderSt,omitempty"` // style to use when rendering border char
@@ -1339,7 +1339,9 @@ type Cookie struct {
 	Private bool `protobuf:"varint,13,opt,name=private,proto3" json:"private,omitempty"`
 	// date when cookie expires relative to client in RFC1123 format.
 	// If improperly formatted will just be ignored and cookie will be treated as session cookie.
-	Expires  string          `protobuf:"bytes,14,opt,name=expires,proto3" json:"expires,omitempty"`
+	Expires string `protobuf:"bytes,14,opt,name=expires,proto3" json:"expires,omitempty"`
+	// information on whether this cookie should only be sent to the server
+	// that requested it
 	SameSite Cookie_SameSite `protobuf:"varint,15,opt,name=sameSite,proto3,enum=uggly.Cookie_SameSite" json:"sameSite,omitempty"`
 	Page     string          `protobuf:"bytes,16,opt,name=page,proto3" json:"page,omitempty"`      // if this cookie should only be sent back on specific pages
 	Secure   bool            `protobuf:"varint,17,opt,name=secure,proto3" json:"secure,omitempty"` // if this cookie should only be sent when connection is secure

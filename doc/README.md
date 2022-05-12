@@ -55,7 +55,7 @@ client side code.
 | server | [string](#string) |  | the server which requested this cookie to be set. should be server only without including port e.g., &#34;localhost&#34; or &#34;mysubdomain.domain.com&#34; |
 | private | [bool](#bool) |  | private Cookies will never be sent back to server |
 | expires | [string](#string) |  | date when cookie expires relative to client in RFC1123 format. If improperly formatted will just be ignored and cookie will be treated as session cookie. |
-| sameSite | [Cookie.SameSite](#uggly-Cookie-SameSite) |  |  |
+| sameSite | [Cookie.SameSite](#uggly-Cookie-SameSite) |  | information on whether this cookie should only be sent to the server that requested it |
 | page | [string](#string) |  | if this cookie should only be sent back on specific pages |
 | secure | [bool](#bool) |  | if this cookie should only be sent when connection is secure |
 | metadata | [bool](#bool) |  | indicates that this cookie should be sent in header metadata instead of body. This is useful if the server wants to pre-filter traffic, for example if a request is not authenticated it can avoid processing the full PageRequest |
@@ -79,10 +79,10 @@ to fill with whatever content is desired.
 | name | [string](#string) |  | the name of the divBox. Used when attaching TextBlobs and forms |
 | border | [bool](#bool) |  | whether the div should add a border |
 | borderW | [int32](#int32) |  | the width of the border, will stay inside the stated overall dimensions and work its way inward |
-| borderChar | [int32](#int32) |  | The character to use as a border character (e.g., &#34;*&#34;) but represented as rune For example, in Python this would be &#39;ord(&#34;*&#34;)&#39; and Go it would be []rune(&#34;*&#34;)[0] |
+| borderChar | [int32](#int32) |  | The character to use as a border character (e.g., &#34;#&#34;) but represented as rune For example, in Python this would be &#39;ord(&#34;#&#34;)&#39; and Go it would be []rune(&#34;#&#34;)[0] |
 | fillChar | [int32](#int32) |  | if the DivBox should be filled with a char as a texture. Follows same rune rules as borderChar. |
 | startX | [int32](#int32) |  | position on the X axis where the box should start |
-| startY | [int32](#int32) |  | position on the Y acis where the box should start |
+| startY | [int32](#int32) |  | position on the Y axis where the box should start |
 | width | [int32](#int32) |  | overall width of the box |
 | Height | [int32](#int32) |  | overall height of the box |
 | borderSt | [Style](#uggly-Style) |  | style to use when rendering border char |
