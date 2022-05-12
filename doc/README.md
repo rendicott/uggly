@@ -19,7 +19,6 @@
     - [PageListing](#uggly-PageListing)
     - [PageRequest](#uggly-PageRequest)
     - [PageResponse](#uggly-PageResponse)
-    - [Pixel](#uggly-Pixel)
     - [Style](#uggly-Style)
     - [TextBlob](#uggly-TextBlob)
     - [TextBox](#uggly-TextBox)
@@ -77,18 +76,17 @@ to fill with whatever content is desired.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| border | [bool](#bool) |  |  |
-| borderW | [int32](#int32) |  |  |
-| borderChar | [int32](#int32) |  |  |
-| fillChar | [int32](#int32) |  |  |
-| startX | [int32](#int32) |  |  |
-| startY | [int32](#int32) |  |  |
-| width | [int32](#int32) |  |  |
-| Height | [int32](#int32) |  |  |
-| pixels | [Pixel](#uggly-Pixel) | repeated |  |
-| borderSt | [Style](#uggly-Style) |  |  |
-| fillSt | [Style](#uggly-Style) |  |  |
+| name | [string](#string) |  | the name of the divBox. Used when attaching TextBlobs and forms |
+| border | [bool](#bool) |  | whether the div should add a border |
+| borderW | [int32](#int32) |  | the width of the border, will stay inside the stated overall dimensions and work its way inward |
+| borderChar | [int32](#int32) |  | The character to use as a border character (e.g., &#34;*&#34;) but represented as rune For example, in Python this would be &#39;ord(&#34;*&#34;)&#39; and Go it would be []rune(&#34;*&#34;)[0] |
+| fillChar | [int32](#int32) |  | if the DivBox should be filled with a char as a texture. Follows same rune rules as borderChar. |
+| startX | [int32](#int32) |  | position on the X axis where the box should start |
+| startY | [int32](#int32) |  | position on the Y acis where the box should start |
+| width | [int32](#int32) |  | overall width of the box |
+| Height | [int32](#int32) |  | overall height of the box |
+| borderSt | [Style](#uggly-Style) |  | style to use when rendering border char |
+| fillSt | [Style](#uggly-Style) |  | style to use when rendering fill char |
 
 
 
@@ -113,7 +111,12 @@ DivBoxes is an array of DivBox
 <a name="uggly-DivScroll"></a>
 
 ### DivScroll
+If a KeyStroke is of type DivScroll
+then this contains information about which
+DivBox to scroll and whether or not the direction
+is down = true or down = false (e.g., &#39;up&#39;)
 
+WARNING: Not currently implemented in &#39;uggly-client&#39;
 
 
 | Field | Type | Label | Description |
@@ -203,10 +206,10 @@ submitted in a PageRequest
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| divName | [string](#string) |  |  |
-| textBoxes | [TextBox](#uggly-TextBox) | repeated |  |
-| submitLink | [Link](#uggly-Link) |  |  |
+| name | [string](#string) |  | The name of the form. This will be used in formActivation keystrokes and for atributing formData in PageRequests |
+| divName | [string](#string) |  | the DivName that the form should be rendered within. All of the elements of the form will be rendered relative to this divBox |
+| textBoxes | [TextBox](#uggly-TextBox) | repeated | The textboxes to be included in this form |
+| submitLink | [Link](#uggly-Link) |  | The link that this form will call when the form&#39;s submit action (e.g., &#39;enter&#39;) is triggered |
 
 
 
@@ -216,7 +219,9 @@ submitted in a PageRequest
 <a name="uggly-FormActivation"></a>
 
 ### FormActivation
-
+If a KeyStroke is of type FormActivation
+then this contains the name of the form which
+should be activated for that keystroke
 
 
 | Field | Type | Label | Description |
@@ -249,12 +254,18 @@ the FormData was sent in the PageRequest
 <a name="uggly-KeyStroke"></a>
 
 ### KeyStroke
-
+KeyStroke indicates an action that will be executed when the keyStroke
+is prssed by the client. This could be one of Link (e.g., new PageRequest),
+DivScroll (indicates the client should attempt to re-render textblobs that 
+exceed their containing DivBox&#39;s capacity), or FormActivation which would 
+look for a form with the given name on the client&#39;s current page.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| keyStroke | [string](#string) |  |  |
+| keyStroke | [string](#string) |  | a string representation of a key on a keyboard. For rune keys (e.g., &#34;j&#34;) simply use the single character. For more complex keys refer to the string representation from the tcell package: https://github.com/gdamore/tcell/blob/master/key.go#L83 
+
+The client may have certain keys reserved that will never be honored. In the current &#34;uggly-client&#34; this includes: F1, F2, F3, F4, F5, F6, F7, and F10 |
 | link | [Link](#uggly-Link) |  |  |
 | divScroll | [DivScroll](#uggly-DivScroll) |  |  |
 | formActivation | [FormActivation](#uggly-FormActivation) |  |  |
@@ -276,12 +287,12 @@ already receieved in a PageResponse.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| keyStroke | [string](#string) |  |  |
-| pageName | [string](#string) |  |  |
-| server | [string](#string) |  |  |
-| port | [string](#string) |  |  |
-| secure | [bool](#bool) |  |  |
-| stream | [bool](#bool) |  |  |
+| keyStroke | [string](#string) |  | a repeat of the keystroke used in the parent KeyStroke TODO: not sure what happens if they don&#39;t match |
+| pageName | [string](#string) |  | the name of the page to be requested in the new PageRequest |
+| server | [string](#string) |  | the server to be used in the new PageRequest |
+| port | [string](#string) |  | the port to be used in the new PageRequest |
+| secure | [bool](#bool) |  | whether or not the new PageRequest should be secure (TLS) |
+| stream | [bool](#bool) |  | whether or not the new PageRequest is a stream |
 
 
 
@@ -321,23 +332,20 @@ to ignore the width and height if it insists
 on statically sized content. Also, the server could
 generate a PageResponse saying something like 
 &#34;this server insists on a minimum height to view
-content&#34; for example. 
-
-Also included is any FormData the client wishes
-to send with this PageRequest.
+content&#34; for example.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| clientWidth | [int32](#int32) |  |  |
-| clientHeight | [int32](#int32) |  |  |
-| formData | [FormData](#uggly-FormData) | repeated |  |
-| server | [string](#string) |  |  |
-| port | [string](#string) |  |  |
-| secure | [bool](#bool) |  |  |
-| sendCookies | [Cookie](#uggly-Cookie) | repeated |  |
-| stream | [bool](#bool) |  |  |
+| name | [string](#string) |  | The name of the page being requested |
+| clientWidth | [int32](#int32) |  | The width of the client at the time of the request |
+| clientHeight | [int32](#int32) |  | The height of the client at the time of the request |
+| formData | [FormData](#uggly-FormData) | repeated | data from form submissions or could be used to send generic key value pairs |
+| server | [string](#string) |  | the intended server for the request |
+| port | [string](#string) |  | the intended port for the request |
+| secure | [bool](#bool) |  | whether or not the connection should be secure (TLS) |
+| sendCookies | [Cookie](#uggly-Cookie) | repeated | Cookies that are intended to be sent from client to server |
+| stream | [bool](#bool) |  | whether or not the request is for a page stream |
 
 
 
@@ -354,30 +362,12 @@ in the form of DivBoxes, Elements, and Links.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| divBoxes | [DivBoxes](#uggly-DivBoxes) |  |  |
-| elements | [Elements](#uggly-Elements) |  |  |
-| name | [string](#string) |  |  |
-| keyStrokes | [KeyStroke](#uggly-KeyStroke) | repeated |  |
-| setCookies | [Cookie](#uggly-Cookie) | repeated |  |
+| divBoxes | [DivBoxes](#uggly-DivBoxes) |  | divBoxes contains all of the divBoxes to be rendered for this page |
+| elements | [Elements](#uggly-Elements) |  | elements contains all of the non divBox elements to be rendered for this page |
+| name | [string](#string) |  | the name of the page to be rendered |
+| keyStrokes | [KeyStroke](#uggly-KeyStroke) | repeated | a list of keystrokes that the client should honor, these could be of type link, formActivation, or divScroll |
+| setCookies | [Cookie](#uggly-Cookie) | repeated | any cookies that the server is requesting the client to set for future requests |
 | streamDelayMs | [int32](#int32) |  | if the response is part of a stream then this is the time in milliseconds the client should wait before drawing the next request |
-
-
-
-
-
-
-<a name="uggly-Pixel"></a>
-
-### Pixel
-Pixel can be used in RawContents. Could be honored for
-use cases such as animations or gaming.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| c | [int32](#int32) |  |  |
-| st | [Style](#uggly-Style) |  |  |
-| isBorder | [bool](#bool) |  |  |
 
 
 
@@ -397,9 +387,9 @@ https://github.com/gdamore/tcell/blob/master/style.go
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| fg | [string](#string) |  |  |
-| bg | [string](#string) |  |  |
-| attr | [string](#string) |  |  |
+| fg | [string](#string) |  | a string representation of the color for the foreground (i.e., text) |
+| bg | [string](#string) |  | a string representation of the color for the background |
+| attr | [string](#string) |  | attr would be things like underline or bold if the client terminal supports it. Experimentation with this has proven that &#39;4&#39; is the only dependable value |
 
 
 
@@ -420,10 +410,10 @@ text in multiple places for some reason.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| content | [string](#string) |  |  |
-| wrap | [bool](#bool) |  |  |
+| content | [string](#string) |  | The actual content. Could be almost any length but be aware of the size of the containing div. |
+| wrap | [bool](#bool) |  | whether or not the text should wrap if it exceeds the width of it&#39;s divbox |
 | style | [Style](#uggly-Style) |  |  |
-| divNames | [string](#string) | repeated |  |
+| divNames | [string](#string) | repeated | the divs this text should be attached to. Generally it&#39;s just one. |
 
 
 
@@ -439,20 +429,20 @@ for the client to render.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| tabOrder | [int32](#int32) |  |  |
-| defaultValue | [string](#string) |  |  |
-| description | [string](#string) |  |  |
+| name | [string](#string) |  | the name of this textBox. Will be used as the key in the key:value during submission |
+| tabOrder | [int32](#int32) |  | the order in which this field will activate when user is tabbing through form fields |
+| defaultValue | [string](#string) |  | the default value that will be placed in the box |
+| description | [string](#string) |  | a description of the text box (e.g., &#34;passwords should include special chars&#34;) which can optionally be drawn to the left of the textbox |
 | positionX | [int32](#int32) |  | relative within DivBox |
 | positionY | [int32](#int32) |  | relative within DivBox |
-| height | [int32](#int32) |  |  |
-| width | [int32](#int32) |  |  |
-| styleCursor | [Style](#uggly-Style) |  |  |
-| styleFill | [Style](#uggly-Style) |  |  |
-| styleText | [Style](#uggly-Style) |  |  |
-| styleDescription | [Style](#uggly-Style) |  |  |
-| showDescription | [bool](#bool) |  |  |
-| password | [bool](#bool) |  |  |
+| height | [int32](#int32) |  | currently textBoxes only utilize a single line |
+| width | [int32](#int32) |  | text that goes beyond the width will horozontially scroll to fit |
+| styleCursor | [Style](#uggly-Style) |  | style for the cursor within the box. ForeGround color is meaningless |
+| styleFill | [Style](#uggly-Style) |  | style for the box fill or background. Foreground and Background should probably match styleText so as not to clash |
+| styleText | [Style](#uggly-Style) |  | style of the text that is being typed into box. |
+| styleDescription | [Style](#uggly-Style) |  | style for the description that is rendered to the left of the box |
+| showDescription | [bool](#bool) |  | whether or not to render the description. Design consideration: This will be rendered as far to the left of the textBox&#39;s positionX attribute as to fit the description. |
+| password | [bool](#bool) |  | whether or not this field is a password, e.g, it&#39;s contents will be hidden while typing |
 
 
 

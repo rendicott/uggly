@@ -3,32 +3,32 @@ option go_package = "github.com/rendicott/uggly";
 package uggly;
 
 
-// Pixel can be used in RawContents. Could be honored for
-// use cases such as animations or gaming.  
-message Pixel {
-    int32 c = 10;
-    Style st = 11;
-    bool isBorder = 12;
-}
-
 /* DivBox is a core element of the protocol. No content can exist
 outside of a DivBox. It requires that some basic properties are included
 such as fill and border geometry but the rawContents property is open
 to fill with whatever content is desired. 
 */
 message DivBox {
-    string name = 9;
-    bool border = 10;
+    string name = 9; // the name of the divBox. Used when attaching TextBlobs and forms
+    bool border = 10; // whether the div should add a border
+    // the width of the border, will stay inside the stated overall dimensions
+    // and work its way inward
     int32 borderW = 11;
+
+    // The character to use as a border character (e.g., "*") but represented as rune
+    // For example, in Python this would be 'ord("*")' and Go it would be 
+    // []rune("*")[0]
     int32 borderChar = 12;
+
+    // if the DivBox should be filled with a char as a texture. Follows same
+    // rune rules as borderChar.
     int32 fillChar = 14;
-    int32 startX = 15;
-    int32 startY = 16;
-    int32 width = 17;
-    int32 Height = 18;
-    repeated Pixel pixels = 19; 
-    Style borderSt = 20;
-    Style fillSt = 21;
+    int32 startX = 15; // position on the X axis where the box should start
+    int32 startY = 16; // position on the Y acis where the box should start
+    int32 width = 17; // overall width of the box
+    int32 Height = 18;// overall height of the box
+    Style borderSt = 20; // style to use when rendering border char
+    Style fillSt = 21; // style to use when rendering fill char
 }
 
 /* TextBlob is a special kind of element that natively understands
@@ -40,16 +40,14 @@ A TextBlob can be assigned to multiple Divs in case you wanted to re-use
 text in multiple places for some reason. 
 */
 message TextBlob {
+    // The actual content. Could be almost any length but be aware
+    // of the size of the containing div.
     string content = 10;
-    bool wrap = 11;
-    Style style = 12;
-    repeated string divNames = 15;
+    bool wrap = 11; // whether or not the text should wrap if it exceeds the width of it's divbox
+    Style style = 12; 
+    repeated string divNames = 15; // the divs this text should be attached to. Generally it's just one.
 }
 
-/* DivBoxes is an array of DivBox */
-message DivBoxes {
-    repeated DivBox boxes = 10;
-}
 
 /* Style is a base property used in divBox fill, border fill, and textboxes
 with fg being foreground color, bg being background color, and attr
@@ -59,8 +57,10 @@ It's essentially a passthrough of the capabilities of tcell's style
 https://github.com/gdamore/tcell/blob/master/style.go
 */
 message Style {
-    string fg = 10;
-    string bg = 11;
+    string fg = 10; // a string representation of the color for the foreground (i.e., text)
+    string bg = 11;// a string representation of the color for the background
+    // attr would be things like underline or bold if the client terminal supports it.
+    // Experimentation with this has proven that '4' is the only dependable value
     string attr = 12;
 }
 
@@ -70,24 +70,49 @@ message Style {
 // to be used to pass polling context to a Form that it
 // already receieved in a PageResponse.
 message Link {
+    // a repeat of the keystroke used in the parent KeyStroke
+    // TODO: not sure what happens if they don't match
     string keyStroke = 10;
+    // the name of the page to be requested in the new PageRequest
     string pageName = 11;
-    string server = 12;
-    string port = 13;
-    bool secure = 16;
-    bool stream = 17;
+    string server = 12; // the server to be used in the new PageRequest
+    string port = 13; // the port to be used in the new PageRequest
+    bool secure = 16; // whether or not the new PageRequest should be secure (TLS)
+    bool stream = 17; // whether or not the new PageRequest is a stream
 }
 
+// If a KeyStroke is of type DivScroll
+// then this contains information about which
+// DivBox to scroll and whether or not the direction
+// is down = true or down = false (e.g., 'up')
+// 
+// WARNING: Not currently implemented in 'uggly-client'
 message DivScroll {
 	string divName = 10;
 	bool down = 11;
 }
 
+// If a KeyStroke is of type FormActivation
+// then this contains the name of the form which
+// should be activated for that keystroke
 message FormActivation {
 	string formName = 10;
 }
 
+// KeyStroke indicates an action that will be executed when the keyStroke
+// is prssed by the client. This could be one of Link (e.g., new PageRequest),
+// DivScroll (indicates the client should attempt to re-render textblobs that 
+// exceed their containing DivBox's capacity), or FormActivation which would 
+// look for a form with the given name on the client's current page.
 message KeyStroke {
+	// a string representation of a key on a keyboard. For rune keys
+	// (e.g., "j") simply use the single character. For more complex 
+	// keys refer to the string representation from the tcell package:
+	// https://github.com/gdamore/tcell/blob/master/key.go#L83 
+        //
+	// The client may have certain keys reserved that will never be
+	// honored. In the current "uggly-client" this includes:
+	//  F1, F2, F3, F4, F5, F6, F7, and F10
 	string keyStroke = 10;
 	oneof Action {
 		Link link = 20;
@@ -99,19 +124,35 @@ message KeyStroke {
 // TextBox contains the properties sent by the server
 // for the client to render. 
 message TextBox {
+	// the name of this textBox. Will be used as the key in the key:value
+	// during submission
 	string name = 10;
+        // the order in which this field will activate when user is tabbing
+        // through form fields
 	int32 tabOrder = 11;
-	string defaultValue = 12;
+	string defaultValue = 12; // the default value that will be placed in the box
+	// a description of the text box (e.g., "passwords should include special chars")
+	// which can optionally be drawn to the left of the textbox
 	string description = 13;
 	int32 positionX = 14; // relative within DivBox
 	int32 positionY = 15; // relative within DivBox
-	int32 height = 16;
-	int32 width = 17;
+	int32 height = 16; // currently textBoxes only utilize a single line
+	int32 width = 17; // text that goes beyond the width will horozontially scroll to fit
+	// style for the cursor within the box. ForeGround color is meaningless
 	Style styleCursor = 18;
+	// style for the box fill or background. Foreground and Background should probably
+        // match styleText so as not to clash
 	Style styleFill = 19;
+        // style of the text that is being typed into box. 
 	Style styleText = 20;
+        // style for the description that is rendered to the left of the box
 	Style styleDescription = 21;
+        // whether or not to render the description. Design consideration:
+        // This will be rendered as far to the left of the textBox's positionX 
+        // attribute as to fit the description.
 	bool showDescription = 22;	
+        // whether or not this field is a password, e.g, it's contents will be hidden
+        // while typing
         bool password = 23;
 }
 
@@ -125,9 +166,16 @@ message TextBox {
 // be used as a return address when this Form is 
 // submitted in a PageRequest
 message Form {
+    // The name of the form. This will be used in formActivation keystrokes and
+    // for atributing formData in PageRequests
     string name = 10;
+    // the DivName that the form should be rendered within. All of the elements of
+    // the form will be rendered relative to this divBox
     string divName = 11;
+    // The textboxes to be included in this form
     repeated TextBox textBoxes = 12;
+    // The link that this form will call when the form's submit action
+    // (e.g., 'enter') is triggered
     Link submitLink = 13;
 }
 
@@ -173,14 +221,25 @@ message PageListing {
     string description = 11;
 }
 
+/* DivBoxes is an array of DivBox */
+message DivBoxes {
+    repeated DivBox boxes = 10;
+}
+
 // The PageResponse contains modular content
 // that the server wishes the client to display
 // in the form of DivBoxes, Elements, and Links. 
 message PageResponse {
+    // divBoxes contains all of the divBoxes to be rendered for this page
     DivBoxes divBoxes = 10;
+    // elements contains all of the non divBox elements to be rendered for this page
     Elements elements = 11;
-    string name = 12;
+    string name = 12; // the name of the page to be rendered
+    // a list of keystrokes that the client should honor, these could be
+    // of type link, formActivation, or divScroll
     repeated KeyStroke keyStrokes = 13;
+    // any cookies that the server is requesting the client to set for future
+    // requests
     repeated Cookie setCookies = 14;
 
     // if the response is part of a stream then this is
@@ -231,19 +290,20 @@ message Cookie {
 // generate a PageResponse saying something like 
 // "this server insists on a minimum height to view
 // content" for example. 
-//
-// Also included is any FormData the client wishes
-// to send with this PageRequest. 
 message PageRequest {
-    string name = 10;
-    int32 clientWidth = 11;
-    int32 clientHeight = 12;
+    string name = 10; // The name of the page being requested
+    int32 clientWidth = 11; // The width of the client at the time of the request
+    int32 clientHeight = 12; // The height of the client at the time of the request
+
+    // data from form submissions or could be used to send generic key value pairs
     repeated FormData formData = 13;
-    string server = 14;
-    string port = 15;
-    bool secure = 16;
+    string server = 14; // the intended server for the request
+    string port = 15; // the intended port for the request
+    bool secure = 16; // whether or not the connection should be secure (TLS)
+
+    // Cookies that are intended to be sent from client to server
     repeated Cookie sendCookies = 17;
-    bool stream = 18;
+    bool stream = 18; // whether or not the request is for a page stream
 }
 
 // A FeedResponse is essentially a list of 
